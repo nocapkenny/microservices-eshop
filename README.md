@@ -66,6 +66,24 @@
 
 > 💡 В текущей реализации все сервисы используют собственные базы данных
 
+graph TB
+    Frontend[Vue.js Фронтенд] --> Gateway[API Gateway]
+    Gateway --> UserService[Сервис пользователей]
+    Gateway --> ProductService[Сервис товаров]
+    Gateway --> CartService[Сервис корзины]
+    Gateway --> OrderService[Сервис заказов]
+
+    UserService --> UserDB[(БД пользователей)]
+    ProductService --> ProductDB[(БД товаров)]
+    CartService --> CartDB[(БД корзины)]
+    OrderService --> OrderDB[(БД заказов)]
+
+    UserService --> Redis[(Redis)]
+    CartService --> Redis
+    OrderService --> Redis
+    ProductService --> Redis
+
+
 ---
 
 ## 📡 API Endpoints
