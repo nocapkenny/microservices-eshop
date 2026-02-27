@@ -60,7 +60,7 @@
 | 👥**Users Service**    | 8004     | Регистрация, авторизация, профиль          |
 | 📦**Products Service** | 8001     | Каталог товаров, категории, фильтрация |
 | 👜**Cart Service**     | 8002     | Управление корзиной пользователя          |
-| 🛒**Order Service**    | 8003     | Создание и отслеживание заказов             |                                                                    
+| 🛒**Order Service**    | 8003     | Создание и отслеживание заказов             |
 | 🧠**Redis**            | 6379     | Кэширование, Celery, сессии                            |
 
 > 💡 В текущей реализации все сервисы используют собственные базы данных
@@ -131,7 +131,7 @@ graph TB
 
 ```bash
 # Терминал 1 — Сервис пользователей
-cd services/user-service
+cd services/authuser-service
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver 0.0.0.0:8004
@@ -139,7 +139,7 @@ python manage.py runserver 0.0.0.0:8004
 
 ```bash
 # Терминал 2 — Сервис товаров
-cd services/product-service
+cd services/catalog-service
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver 0.0.0.0:8001
@@ -163,7 +163,7 @@ python manage.py runserver 0.0.0.0:8003
 
 ```bash
 # Терминал 5 — API Gateway (опционально)
-cd api-gateway
+cd apigateway
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver 0.0.0.0:8000
@@ -174,5 +174,3 @@ python manage.py runserver 0.0.0.0:8000
 ### 🐳 Запуск через Docker (в разработке)
 
 > Поддержка Docker будет добавлена в ближайшее время.
-
-
