@@ -11,38 +11,48 @@ export const useCatalogStore = defineStore("catalog", () => {
   const catalogPages = ref(1)
   const activePage = ref(1)
   const productsCount = ref(0)
+  const isProductsLoading = ref(false)
 
   // ACTIONS
   const getProducts = async () => {
     try {
+      isProductsLoading.value = true
       const { data } = await axios.get(`/api/products/?page=${activePage.value}`);
       products.value = data.results;
       catalogPages.value = Math.ceil(data.count / 3)
       productsCount.value = data.count
     } catch (e) {
       console.log(e);
+    } finally{
+      isProductsLoading.value = false
     }
   };
 
   const getProductsByQuery = async () => {
     try {
+      isProductsLoading.value = true
       const { data } = await axios.get(
         `/api/products/?search=${query.value}`
       );
       products.value = data.results;
     } catch (e) {
       console.log(e);
+    } finally{
+      isProductsLoading.value = false
     }
   };
 
   const getProductsBySlug = async (slug) => {
     try {
+      isProductsLoading.value = true
       const { data } = await axios.get(
         `/api/products/${slug}/`
       );
       products.value = data.results;
     } catch (e) {
       console.log(e);
+    } finally{
+      isProductsLoading.value = false
     }
   };
 
@@ -81,6 +91,7 @@ export const useCatalogStore = defineStore("catalog", () => {
     query,
     catalogPages,
     activePage,
-    productsCount
+    productsCount,
+    isProductsLoading
   };
 });

@@ -2,7 +2,10 @@
 import { computed, onMounted, watch } from "vue";
 import { useCartStore } from "../stores/cart";
 import { storeToRefs } from "pinia";
+import { useUserStore } from "../stores/user";
+import Loader from "./ui/Loader.vue";
 
+// PROPS
 const props = defineProps({
   product: {
     type: Object,
@@ -10,10 +13,15 @@ const props = defineProps({
   },
 });
 
+// STORES
 const cartStore = useCartStore();
 const { addToCart } = cartStore;
-const { cart } = storeToRefs(cartStore);
+const { cart, isCartLoading } = storeToRefs(cartStore);
 
+const userStore = useUserStore();
+const { accessToken } = storeToRefs(userStore);
+
+// COMPUTED
 const isProductInCart = computed(() => {
   const items = cart.value?.items || [];
   return (
@@ -70,7 +78,8 @@ const stockClass = computed(() => ({
         class="card__footer-button"
         :class="{ disabled: !props.product.is_in_stock || isProductInCart }"
         :disabled="!props.product.is_in_stock || isProductInCart"
-        @click="addToCart(props.product.id)"
+        @click="addToCart(props.product.id, accessToken)"
+        v-if="!isCartLoading"
       >
         <img
           class="card__footer-img"
@@ -78,6 +87,7 @@ const stockClass = computed(() => ({
           alt="cart"
         />
       </button>
+      <Loader v-else />
     </div>
   </div>
 </template>

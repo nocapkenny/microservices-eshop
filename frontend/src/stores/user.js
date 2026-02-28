@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { useCartStore } from "./cart";
 import { ref } from "vue";
 import axios from "axios";
+import { notyf } from "../plugins/notyf";
 
 export const useUserStore = defineStore("user", () => {
   const cartStore = useCartStore();
@@ -30,12 +31,17 @@ export const useUserStore = defineStore("user", () => {
       console.log(data);
       accessToken.value = data.access;
       localStorage.setItem("access", data.access);
+      console.log(accessToken.value);
       user.value = data.user;
       isLoggedIn.value = true;
       await getUser();
-      cartStore.getCart();
+      await cartStore.getCart(accessToken.value);
+      notyf.success("Вы успешно зарегистрировались!");
     } catch (e) {
       console.log(e);
+      const errors = e.response.data;
+      console.log(errors)
+      notyf.error(e.response.data[Object.keys(errors)[0]][0])
     }
   };
 
@@ -54,6 +60,7 @@ export const useUserStore = defineStore("user", () => {
       console.log(user.value);
     } catch (e) {
       console.log(e);
+      notyf.error('Ошибка получения данных')
     }
   };
 
@@ -71,9 +78,11 @@ export const useUserStore = defineStore("user", () => {
       localStorage.setItem("access", data.access);
       user.value = data.user;
       isLoggedIn.value = true;
-      cartStore.getCart();
+      cartStore.getCart(accessToken.value);
+      notyf.success("Вы успешно авторизовались!");
     } catch (e) {
       console.log(e);
+      notyf.error(e.response.data.error)
     }
   };
 
@@ -83,5 +92,6 @@ export const useUserStore = defineStore("user", () => {
     loginUser,
     getUser,
     isLoggedIn,
+    accessToken
   };
 });

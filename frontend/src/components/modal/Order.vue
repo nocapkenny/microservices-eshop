@@ -8,7 +8,6 @@ const emit = defineEmits(["close"]);
 
 const orderStore = useOrderStore();
 const { orders } = storeToRefs(orderStore);
-const { createOrder } = orderStore;
 
 const status = computed(() => (item) => {
   if (item.status === "pending") return "В обработке";

@@ -5,11 +5,16 @@ import { useCartStore } from "../../stores/cart";
 import { useOrderStore } from "../../stores/order";
 import { useCatalogStore } from "../../stores/catalog";
 import { storeToRefs } from "pinia";
+import { useUserStore } from "../../stores/user";
+import Loader from "../ui/Loader.vue";
 
+// EMITS
 const emit = defineEmits(["close"]);
 
+
+// STORES
 const cartStore = useCartStore();
-const { cart } = storeToRefs(cartStore);
+const { cart, isCartLoading } = storeToRefs(cartStore);
 const { updateCart, clearCart, deleteItem } = cartStore;
 
 const orderStore = useOrderStore();
@@ -18,36 +23,16 @@ const { createOrder, getOrders } = orderStore;
 const catalogStore = useCatalogStore();
 const { getProducts } = catalogStore;
 
+const userStore = useUserStore();
+const { accessToken } = storeToRefs(userStore);
+
+
+// REFS
 const address = ref("");
 
+
+// COMPUTED
 const isAddressEmpty = computed(() => !(address.value.length > 3));
-
-const closeModal = () => {
-  emit("close");
-};
-
-// Методы
-const increaseQuantity = (item) => {
-  if (item.quantity < item.product_info.stock_quantity) {
-    item.quantity++;
-    updateCart(item.id, item.quantity);
-  }
-};
-
-const decreaseQuantity = (item) => {
-  if (item.quantity > 1) {
-    item.quantity--;
-    updateCart(item.id, item.quantity);
-  }
-};
-
-const handleCreateOrder = async () => {
-    await createOrder(address.value);
-    await clearCart();
-    await getProducts();
-    await getOrders();
-
-}
 
 const total = computed(() => {
   return cart.value.items.reduce(
@@ -55,6 +40,34 @@ const total = computed(() => {
     0
   );
 });
+
+// METHODS
+const closeModal = () => {
+  emit("close");
+};
+
+const increaseQuantity = (item) => {
+  if (item.quantity < item.product_info.stock_quantity) {
+    item.quantity++;
+    updateCart(item.id, item.quantity, accessToken.value);
+  }
+};
+
+const decreaseQuantity = (item) => {
+  if (item.quantity > 1) {
+    item.quantity--;
+    updateCart(item.id, item.quantity, accessToken.value);
+  }
+};
+
+const handleCreateOrder = async () => {
+    await createOrder(address.value, accessToken.value);
+    await clearCart(accessToken.value);
+    await getProducts();
+    await getOrders(accessToken.value);
+
+}
+
 </script>
 
 <template>
@@ -91,9 +104,10 @@ const total = computed(() => {
             >
               +
             </button>
-            <button class="btn-primary" @click="deleteItem(item.id)">
+            <button class="btn-primary" @click="deleteItem(item.id, accessToken)" v-if="!isCartLoading">
               Удалить
             </button>
+            <Loader size="sm" v-else />
           </div>
         </div>
 
@@ -101,9 +115,10 @@ const total = computed(() => {
           Итого: <strong>{{ total }} ₽</strong>
         </div>
 
-        <button class="btn-primary aside__clear" @click="clearCart">
+        <button class="btn-primary aside__clear" @click="clearCart(accessToken)" v-if="!isCartLoading">
           Очистить корзину
         </button>
+        <Loader size="sm" v-else />
         <input
           placeholder="Адрес доставки"
           type="text"

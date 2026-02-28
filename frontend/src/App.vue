@@ -11,11 +11,11 @@ const userStore = useUserStore();
 const cartStore = useCartStore();
 const orderStore = useOrderStore();
 
-onMounted(() => {
+onMounted( async () => {
   if (localStorage.getItem("access")){
-    userStore.getUser();
-    cartStore.getCart();
-    orderStore.getOrders();
+    await userStore.getUser();
+    await cartStore.getCart(localStorage.getItem("access"));
+    await orderStore.getOrders(localStorage.getItem("access"));
   }
 });
 </script>

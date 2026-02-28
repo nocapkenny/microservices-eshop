@@ -5,11 +5,18 @@ import { storeToRefs } from "pinia";
 import CatalogCard from "./CatalogCard.vue";
 import Pagination from "./ui/Pagination.vue";
 import Filter from "./Filter.vue";
+import Loader from "./ui/Loader.vue";
 
 // STORES
 const catalogStore = useCatalogStore();
-const { products, catalogPages, activePage, activeCategory, productsCount } =
-  storeToRefs(catalogStore);
+const {
+  products,
+  catalogPages,
+  activePage,
+  activeCategory,
+  productsCount,
+  isProductsLoading,
+} = storeToRefs(catalogStore);
 const { getProducts, getCategories } = catalogStore;
 
 watch(
@@ -17,7 +24,7 @@ watch(
   () => {
     getProducts();
   },
-  { deep: true }
+  { deep: true },
 );
 
 onMounted(() => {
@@ -30,14 +37,25 @@ onMounted(() => {
   <div class="container">
     <h2 class="title">Каталог товаров</h2>
     <Filter />
-    <section class="products" v-auto-animate v-if="products.length > 0">
+    <section class="loading" v-if="isProductsLoading">
+      <Loader size="lg" />
+    </section>
+    <section
+      class="products"
+      v-auto-animate
+      v-if="products.length > 0 && !isProductsLoading"
+    >
       <CatalogCard
         v-for="product in products"
         :key="product.id"
         :product="product"
       />
     </section>
-    <section class="not-found" v-auto-animate v-else>
+    <section
+      class="not-found"
+      v-auto-animate
+      v-else-if="(products.length === 0 || !products) && !isProductsLoading"
+    >
       <p class="not-found__text" v-auto-animate>Товары не найдены 😭</p>
     </section>
     <Pagination
@@ -49,6 +67,9 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+.loading{
+  margin-top: 200px;
+}
 .products {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
