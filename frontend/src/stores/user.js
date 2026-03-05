@@ -60,7 +60,7 @@ export const useUserStore = defineStore("user", () => {
       console.log(user.value);
     } catch (e) {
       console.log(e);
-      notyf.error('Ошибка получения данных')
+      notyf.error('Ошибка получения данных о пользователе')
     }
   };
 
@@ -86,11 +86,19 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
+  const logout = () => {
+    accessToken.value = null;
+    localStorage.removeItem("access");
+    user.value = {};
+    isLoggedIn.value = false;
+  }
+
   return {
     user,
     registerUser,
     loginUser,
     getUser,
+    logout,
     isLoggedIn,
     accessToken
   };

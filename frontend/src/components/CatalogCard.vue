@@ -19,7 +19,7 @@ const { addToCart } = cartStore;
 const { cart, isCartLoading } = storeToRefs(cartStore);
 
 const userStore = useUserStore();
-const { accessToken } = storeToRefs(userStore);
+const { accessToken, isLoggedIn } = storeToRefs(userStore);
 
 // COMPUTED
 const isProductInCart = computed(() => {
@@ -104,17 +104,21 @@ $accent-green: #2e8b57;
   &__box {
     width: 400px;
     height: 400px;
+    pointer-events: none;
   }
   &__box-img {
     width: 100%;
     height: 100%;
     object-fit: contain;
     border-radius: 6px;
+    user-select: none;
+    pointer-events: none;
   }
   &__info {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 20px;
   }
   &__info-count {
     color: $accent-red;
@@ -152,6 +156,14 @@ $accent-green: #2e8b57;
   &__footer-img {
     width: 30px;
     height: 30px;
+  }
+}
+
+@media(max-width: 576px) {
+  .card{
+    &__box{
+      width: calc(100vw - 60px);
+    }
   }
 }
 </style>

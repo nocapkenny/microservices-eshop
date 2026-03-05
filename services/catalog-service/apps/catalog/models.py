@@ -1,6 +1,23 @@
 from django.db import models
 from django.utils.text import slugify
 
+class SliderImage(models.Model):
+    title = models.CharField(max_length=200, verbose_name="Заголовок")
+    description = models.TextField(blank=True, verbose_name="Описание")
+    image = models.ImageField(upload_to='slider/', verbose_name="Изображение")
+    link = models.URLField(blank=True, null=True, verbose_name="Ссылка (опционально)")
+    order = models.PositiveIntegerField(default=0, verbose_name="Порядок отображения")
+    is_active = models.BooleanField(default=True, verbose_name="Отображать")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', '-created_at']
+        verbose_name = "Изображение слайдера"
+        verbose_name_plural = "Слайдер"
+
+    def __str__(self):
+        return self.title
+
 class Category(models.Model):
 
     name = models.CharField(max_length=255)

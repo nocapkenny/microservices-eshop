@@ -1,11 +1,13 @@
 <script setup>
-import { onMounted, watch } from "vue";
+import { onMounted, watch, ref } from "vue";
 import { useCatalogStore } from "../stores/catalog";
 import { storeToRefs } from "pinia";
-import CatalogCard from "./CatalogCard.vue";
-import Pagination from "./ui/Pagination.vue";
-import Filter from "./Filter.vue";
-import Loader from "./ui/Loader.vue";
+import CatalogCard from "../components/CatalogCard.vue";
+import Pagination from "../components/ui/Pagination.vue";
+import Filter from "../components/Filter.vue";
+import Loader from "../components/ui/Loader.vue";
+import axios from "axios";
+import Slider from "../components/ui/Slider.vue";
 
 // STORES
 const catalogStore = useCatalogStore();
@@ -19,22 +21,38 @@ const {
 } = storeToRefs(catalogStore);
 const { getProducts, getCategories } = catalogStore;
 
+
+// REFS
+const sliders = ref([]);
+
+// METHODS
+const getSliders = async () => {
+  try {
+    const { data } = await axios.get(`/api/sliders/`);
+    sliders.value = data.results;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+// HOOKS
+onMounted(async () => {
+  await getSliders();
+  await getProducts();
+  await getCategories();
+});
 watch(
   () => activePage.value,
-  () => {
-    getProducts();
+  async () => {
+    await getProducts();
   },
   { deep: true },
 );
-
-onMounted(() => {
-  getProducts();
-  getCategories();
-});
 </script>
 
 <template>
   <div class="container">
+    <Slider :slides="sliders" />
     <h2 class="title">Каталог товаров</h2>
     <Filter />
     <section class="loading" v-if="isProductsLoading">
@@ -67,7 +85,11 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
-.loading{
+.title {
+  margin-top: 50px;
+  margin-bottom: 30px;
+}
+.loading {
   margin-top: 200px;
 }
 .products {
@@ -79,5 +101,20 @@ onMounted(() => {
 .not-found__text {
   font-size: 50px;
   text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .title {
+    margin-top: 100px;
+    margin-bottom: 20px;
+  }
+  .products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .products {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 </style>

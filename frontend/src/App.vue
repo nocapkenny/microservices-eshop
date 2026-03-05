@@ -1,7 +1,5 @@
 <script setup>
 import Header from "./components/Header.vue";
-import Catalog from "./components/Catalog.vue";
-import ModalManager from "./components/ModalManager.vue";
 import { onMounted } from "vue";
 import { useUserStore } from "./stores/user";
 import { useCartStore } from "./stores/cart";
@@ -22,8 +20,6 @@ onMounted( async () => {
 
 <template>
   <Header />
-  <Catalog />
-  <ModalManager />
+  <RouterView />
 </template>
 
-<style scoped lang="scss"></style>

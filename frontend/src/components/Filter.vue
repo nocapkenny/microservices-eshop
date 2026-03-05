@@ -6,15 +6,20 @@ import { storeToRefs } from "pinia";
 const catalogStore = useCatalogStore();
 const { categories, activeCategory, productsCount } = storeToRefs(catalogStore);
 const { setActiveCategory } = catalogStore;
-
 </script>
 
 <template>
   <section class="categories" v-auto-animate>
-    <button :class="{active: activeCategory === null}" class="category" @click="setActiveCategory(null)">Все товары ({{ productsCount }})</button>
+    <button
+      :class="{ active: activeCategory === null }"
+      class="category"
+      @click="setActiveCategory(null)"
+    >
+      Все товары ({{ productsCount }})
+    </button>
     <button
       class="category"
-      :class="{active: activeCategory === category.slug}"
+      :class="{ active: activeCategory === category.slug }"
       v-for="category in categories"
       :key="category.id"
       @click="setActiveCategory(category.slug)"
@@ -25,12 +30,14 @@ const { setActiveCategory } = catalogStore;
 </template>
 
 <style scoped lang="scss">
-.categories{
-    display: flex;
-    gap: 10px;
+.categories {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
 }
-.category.active{
-    background-color: #2e8b57;;
-    color: #fff;
+.category.active {
+  background-color: #2e8b57;
+  color: #fff;
 }
 </style>

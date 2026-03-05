@@ -19,6 +19,8 @@ class ProxyView(View):
         logger.info(f"Async gateway request: {request.method} {request.path}")
         logger.info(f"Headers: {dict(request.headers)}")
         logger.info(f"Body: {request.body.decode('utf-8') if request.body else 'No body'}")
+        if request.path.startswith('/admin/') or request.path.startswith('/static/'):
+            return await self.proxy_to_django_direct(request)
 
         service_name = self.get_service_name(request)
         if not service_name:
@@ -40,7 +42,7 @@ class ProxyView(View):
         path = request.path
         if path.startswith('/api/user/'):
             return 'user-service'
-        elif path.startswith('/api/products/') or path.startswith('/api/categories/'):
+        elif path.startswith('/api/products/') or path.startswith('/api/categories/') or path.startswith('/api/sliders/'):
             return 'product-service'
         elif path.startswith('/api/cart/'):
             return 'cart-service'

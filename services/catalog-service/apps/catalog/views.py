@@ -6,9 +6,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 
 
-from .models import Category, Product, ProductImage
-from .serializers import CategorySerializer, ProductCardSerializer, ProductDetailSerializer, ProductImageSerializer
+from .models import Category, Product, ProductImage, SliderImage
+from .serializers import CategorySerializer, ProductCardSerializer, ProductDetailSerializer, ProductImageSerializer, SliderImageSerializer
 
+class SliderImageViewSet(generics.ListAPIView):
+    queryset = SliderImage.objects.filter(is_active=True)
+    serializer_class = SliderImageSerializer
 
 class CategoryListView(generics.ListAPIView):
     permission_classes = [AllowAny]
